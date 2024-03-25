@@ -1,56 +1,41 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { AdminServices } from "./admin.service";
 import pick from "../../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
+import catchAsync from "../../../shared/catchAsync";
 
-const getAllFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const filters = pick(req.query, adminFilterableFields);
-    const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, adminFilterableFields);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
 
-    const result = await AdminServices.getAllFromDB(filters, options);
+  const result = await AdminServices.getAllFromDB(filters, options);
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Admin data fetched!",
-      meta: result.meta,
-      data: result.data,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin data fetched!",
+    meta: result.meta,
+    data: result.data,
+  });
+});
 
-const getByIdFrom = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
+const getByIdFrom = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await AdminServices.getByIdFrom(id);
+  const result = await AdminServices.getByIdFrom(id);
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Admin data fetched by id!",
-      data: result,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin data fetched by id!",
+    data: result,
+  });
+});
 
-const updateIntoDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+const updateIntoDB = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const data = req.body;
 
@@ -62,17 +47,11 @@ const updateIntoDB = async (
       message: "Admin data updated!",
       data: result,
     });
-  } catch (error: any) {
-    next(error);
   }
-};
+);
 
-const deleteFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+const deleteFromDB = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const result = await AdminServices.deleteFromDB(id);
@@ -83,17 +62,11 @@ const deleteFromDB = async (
       message: "Admin data deleted!",
       data: result,
     });
-  } catch (error: any) {
-    next(error);
   }
-};
+);
 
-const softDeleteFromDB = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+const softDeleteFromDB = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const result = await AdminServices.softDeleteFromDB(id);
@@ -104,10 +77,8 @@ const softDeleteFromDB = async (
       message: "Admin data deleted!",
       data: result,
     });
-  } catch (error: any) {
-    next(error);
   }
-};
+);
 
 export const AdminControllers = {
   getAllFromDB,

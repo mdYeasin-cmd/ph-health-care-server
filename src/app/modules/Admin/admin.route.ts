@@ -1,16 +1,19 @@
-import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express";
-import { AdminServices } from "./admin.service";
+import express from "express";
 import { AdminControllers } from "./admin.controller";
+import validatedRequest from "../../middlewares/validatedRequest";
+import { adminValidationSchemas } from "./admin.validations";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 router.get("/", AdminControllers.getAllFromDB);
 
 router.get("/:id", AdminControllers.getByIdFrom);
 
-router.patch("/:id", AdminControllers.updateIntoDB);
+router.patch(
+  "/:id",
+  validatedRequest(adminValidationSchemas.update),
+  AdminControllers.updateIntoDB
+);
 
 router.delete("/:id", AdminControllers.deleteFromDB);
 
