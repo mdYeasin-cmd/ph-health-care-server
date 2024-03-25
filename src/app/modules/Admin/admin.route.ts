@@ -8,4 +8,12 @@ const prisma = new PrismaClient();
 
 router.get("/", AdminControllers.getAllFromDB);
 
+router.get("/:id", AdminControllers.getByIdFrom);
+
+router.patch("/:id", AdminControllers.updateIntoDB);
+
+router.delete("/:id", AdminControllers.deleteFromDB);
+
+router.delete("/soft/:id", AdminControllers.softDeleteFromDB);
+
 export const AdminRoutes = router;
