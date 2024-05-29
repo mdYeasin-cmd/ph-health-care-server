@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import ApiError from "../errors/ApiError";
 
 const globalErrorHandler = (
   err: any,
@@ -21,6 +22,9 @@ const globalErrorHandler = (
       message = "Duplicate key error!";
       error = err.meta;
     }
+  } else if (err instanceof ApiError) {
+    message = err.message;
+    statusCode = err.statusCode;
   }
 
   res.status(statusCode).json({
